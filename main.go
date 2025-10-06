@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"go1fl-final/pkg/api"
 	"go1fl-final/pkg/db"
 	"go1fl-final/pkg/server"
 )
@@ -18,6 +19,8 @@ func main() {
 		log.Fatal(err)
 	}
 	defer db.Close()
+
+	api.Init()
 
 	srv := server.New()
 	if err := srv.Start(); err != nil {
