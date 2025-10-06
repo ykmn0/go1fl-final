@@ -5,7 +5,7 @@
 *.so
 *.dylib
 scheduler
-go1fl-final-test
+go1fl-final
 
 # Test binary, built with `go test -c`
 *.test

@@ -85,7 +85,7 @@
 # 1. Клонируйте репозиторий
 
 git clone <your-repo-url>
-cd go1fl-final-test
+cd go1fl-final
 
 # 2. Установите зависимости
 
