@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+
+	"go1fl-final/pkg/db"
 )
 
 func nextDateHandler(w http.ResponseWriter, r *http.Request) {
@@ -27,11 +29,12 @@ func nextDateHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	next, err := NextDate(now, dstart, repeat)
+	next, err := db.NextDate(now, dstart, repeat)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	fmt.Fprint(w, next)
 }

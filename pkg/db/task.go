@@ -53,7 +53,6 @@ func Tasks(limit int) ([]*Task, error) {
 }
 
 func SearchTasks(search string, limit int) ([]*Task, error) {
-	// Try to parse as date format DD.MM.YYYY
 	if date, err := time.Parse("02.01.2006", search); err == nil {
 		dateStr := date.Format("20060102")
 		query := `SELECT id, date, title, comment, repeat FROM scheduler WHERE date = ? ORDER BY date LIMIT ?`
@@ -67,7 +66,6 @@ func SearchTasks(search string, limit int) ([]*Task, error) {
 		return scanTasks(rows)
 	}
 
-	// Search in title and comment
 	searchPattern := "%" + search + "%"
 	query := `SELECT id, date, title, comment, repeat FROM scheduler WHERE title LIKE ? OR comment LIKE ? ORDER BY date LIMIT ?`
 
@@ -118,6 +116,46 @@ func UpdateTask(task *Task) error {
 	query := `UPDATE scheduler SET date = ?, title = ?, comment = ?, repeat = ? WHERE id = ?`
 
 	res, err := DB.Exec(query, task.Date, task.Title, task.Comment, task.Repeat, task.ID)
+	if err != nil {
+		return err
+	}
+
+	count, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if count == 0 {
+		return fmt.Errorf("task not found")
+	}
+
+	return nil
+}
+
+func DeleteTask(id string) error {
+	query := `DELETE FROM scheduler WHERE id = ?`
+
+	res, err := DB.Exec(query, id)
+	if err != nil {
+		return err
+	}
+
+	count, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if count == 0 {
+		return fmt.Errorf("task not found")
+	}
+
+	return nil
+}
+
+func UpdateTaskDate(id, date string) error {
+	query := `UPDATE scheduler SET date = ? WHERE id = ?`
+
+	res, err := DB.Exec(query, date, id)
 	if err != nil {
 		return err
 	}

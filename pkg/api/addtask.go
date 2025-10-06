@@ -10,6 +10,8 @@ import (
 	"go1fl-final/pkg/db"
 )
 
+const dateLayout = "20060102"
+
 func addTaskHandler(w http.ResponseWriter, r *http.Request) {
 	var task db.Task
 
@@ -62,13 +64,13 @@ func checkDate(task *db.Task) error {
 	tDay := time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, time.UTC)
 
 	if task.Repeat != "" {
-		_, err := NextDate(now, task.Date, task.Repeat)
+		_, err := db.NextDate(now, task.Date, task.Repeat)
 		if err != nil {
 			return fmt.Errorf("invalid repeat rule: %v", err)
 		}
 
 		if tDay.Before(nowDay) {
-			next, _ := NextDate(now, task.Date, task.Repeat)
+			next, _ := db.NextDate(now, task.Date, task.Repeat)
 			task.Date = next
 		}
 	} else {
