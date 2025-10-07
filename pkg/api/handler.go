@@ -1,0 +1,40 @@
+package api
+
+import (
+	"fmt"
+	"net/http"
+	"time"
+
+	"go1fl-final/pkg/db"
+)
+
+func nextDateHandler(w http.ResponseWriter, r *http.Request) {
+	repeat := r.FormValue("repeat")
+	dstart := r.FormValue("date")
+	if dstart == "" {
+		http.Error(w, "parameter 'date' is required", http.StatusBadRequest)
+		return
+	}
+
+	var now time.Time
+	nowStr := r.FormValue("now")
+	if nowStr == "" {
+		now = time.Now()
+	} else {
+		var err error
+		now, err = time.Parse(dateLayout, nowStr)
+		if err != nil {
+			http.Error(w, "invalid 'now' parameter", http.StatusBadRequest)
+			return
+		}
+	}
+
+	next, err := db.NextDate(now, dstart, repeat)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	fmt.Fprint(w, next)
+}
