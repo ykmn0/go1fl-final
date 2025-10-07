@@ -23,7 +23,7 @@ func tasksHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err != nil {
-		writeError(w, "Failed to fetch tasks")
+		writeError(w, "Failed to fetch tasks", http.StatusInternalServerError)
 		return
 	}
 

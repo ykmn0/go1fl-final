@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -26,13 +27,13 @@ func signInHandler(w http.ResponseWriter, r *http.Request) {
 
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		writeJSON(w, SignInResponse{Error: "Failed to read request"})
+		writeJSON(w, SignInResponse{Error: fmt.Sprintf("Failed to read request: %v", err)})
 		return
 	}
 	defer r.Body.Close()
 
 	if err := json.Unmarshal(body, &req); err != nil {
-		writeJSON(w, SignInResponse{Error: "Invalid JSON format"})
+		writeJSON(w, SignInResponse{Error: fmt.Sprintf("Invalid JSON format: %v", err)})
 		return
 	}
 
@@ -44,7 +45,7 @@ func signInHandler(w http.ResponseWriter, r *http.Request) {
 
 	token, err := generateToken(req.Password)
 	if err != nil {
-		writeJSON(w, SignInResponse{Error: "Failed to generate token"})
+		writeJSON(w, SignInResponse{Error: fmt.Sprintf("Failed to generate token: %v", err)})
 		return
 	}
 

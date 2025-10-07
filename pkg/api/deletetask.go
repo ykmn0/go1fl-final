@@ -10,12 +10,12 @@ import (
 func deleteTaskHandler(w http.ResponseWriter, r *http.Request) {
 	id := r.FormValue("id")
 	if id == "" {
-		writeError(w, "Task ID is required")
+		writeError(w, "Task ID is required", http.StatusBadRequest)
 		return
 	}
 
 	if err := db.DeleteTask(id); err != nil {
-		writeError(w, fmt.Sprintf("Failed to delete task: %v", err))
+		writeError(w, fmt.Sprintf("Failed to delete task: %v", err), http.StatusInternalServerError)
 		return
 	}
 
